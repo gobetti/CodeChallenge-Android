@@ -12,8 +12,12 @@ interface TMDBService {
 
     companion object Factory {
         fun create(): TMDBService {
+            return create("https://api.themoviedb.org/3/")
+        }
+
+        fun create(baseUrl: String): TMDBService {
             return Retrofit.Builder()
-                    .baseUrl("https://api.themoviedb.org/3/")
+                    .baseUrl(baseUrl)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build()
                     .create(TMDBService::class.java)
