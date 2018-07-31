@@ -2,6 +2,7 @@ package me.gobetti.codechallenge.modules.list
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +14,12 @@ class ListFragment : Fragment(), ListContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter = ListPresenter(this)
+        presenter.fetchMovies()
+
         return inflater.inflate(R.layout.fragment_list, container, false)
     }
 
     override fun displayMovies(movies: List<Movie>) {
-        TODO("not implemented")
+        Log.d("displayMovies", "Received ${movies.size} movies")
     }
 }
