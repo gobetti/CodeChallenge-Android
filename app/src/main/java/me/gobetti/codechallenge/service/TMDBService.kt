@@ -1,6 +1,7 @@
 package me.gobetti.codechallenge.service
 
 import me.gobetti.codechallenge.model.TMDBResponse
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -16,9 +17,12 @@ interface TMDBService {
         }
 
         fun create(baseUrl: String): TMDBService {
+            val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor()).build()
+
             return Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(MoshiConverterFactory.create())
+                    .client(client)
                     .build()
                     .create(TMDBService::class.java)
         }
