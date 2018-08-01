@@ -6,6 +6,8 @@ import me.gobetti.codechallenge.service.TMDBService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.provider.SearchRecentSuggestions
+import me.gobetti.codechallenge.utils.RecentSearchesProvider
 
 class ListPresenter(val view: ListContract.View): ListContract.Presenter {
     private val service = TMDBService.create()
@@ -28,6 +30,10 @@ class ListPresenter(val view: ListContract.View): ListContract.Presenter {
     }
 
     override fun searchMovies(query: String) {
+        val suggestions = SearchRecentSuggestions(view.getContext(),
+                RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
+        suggestions.saveRecentQuery(query, null)
+
         service.searchMovies(query).enqueue(object: Callback<TMDBResponse> {
             override fun onResponse(call: Call<TMDBResponse>?, response: Response<TMDBResponse>?) {
                 val movies = response?.body()?.movies

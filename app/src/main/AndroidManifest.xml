@@ -11,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider android:name=".utils.RecentSearchesProvider"
+            android:authorities="me.gobetti.CodeChallenge.RecentSearchesProvider" />
         <activity android:name=".MainActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
