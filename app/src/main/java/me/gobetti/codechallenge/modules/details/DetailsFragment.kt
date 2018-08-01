@@ -1,6 +1,7 @@
 package me.gobetti.codechallenge.modules.details
 
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ class DetailsFragment : Fragment(), DetailsContract.View {
     }
 
     private lateinit var movie: Movie
+    private var isFullScreen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         movie = arguments!!.getSerializable(MOVIE_KEY) as Movie
@@ -35,6 +37,17 @@ class DetailsFragment : Fragment(), DetailsContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        populateScreenElements()
+
+        moviePosterImageView.setOnClickListener {
+            isFullScreen = !isFullScreen
+            val params = moviePosterImageView.layoutParams as ConstraintLayout.LayoutParams
+            params.bottomToBottom = if (isFullScreen) detailsConstraintLayout.id else guideline.id
+            moviePosterImageView.requestLayout()
+        }
+    }
+
+    private fun populateScreenElements() {
         moviePosterImageView.loadFrom(movie, TMDBImageSize.highest)
         movieOverviewTextView.text = movie.overview
     }
