@@ -16,6 +16,10 @@ class ListFragment : Fragment(), ListContract.View {
     private val presenter: ListContract.Presenter = ListPresenter(this)
     private lateinit var linearLayoutManager: LinearLayoutManager
 
+    fun onSearchAction(query: String) {
+        presenter.searchMovies(query)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list, container, false)
     }

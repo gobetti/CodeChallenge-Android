@@ -26,4 +26,21 @@ class ListPresenter(val view: ListContract.View): ListContract.Presenter {
             }
         })
     }
+
+    override fun searchMovies(query: String) {
+        service.searchMovies(query).enqueue(object: Callback<TMDBResponse> {
+            override fun onResponse(call: Call<TMDBResponse>?, response: Response<TMDBResponse>?) {
+                val movies = response?.body()?.movies
+                if (movies == null) {
+                    Log.e("searchMovies", "movies is null")
+                    return
+                }
+                view.displayMovies(movies)
+            }
+
+            override fun onFailure(call: Call<TMDBResponse>?, t: Throwable?) {
+                Log.e("searchMovies", "onFailure")
+            }
+        })
+    }
 }

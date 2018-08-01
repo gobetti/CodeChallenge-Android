@@ -1,5 +1,6 @@
 package me.gobetti.codechallenge
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +10,8 @@ import android.content.Context
 import android.support.v7.widget.SearchView
 
 class MainActivity : AppCompatActivity() {
+    private val listFragment: ListFragment by lazy { ListFragment() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,10 +29,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        if (intent != null && intent.action == Intent.ACTION_SEARCH) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            listFragment.onSearchAction(query)
+        }
+    }
+
     private fun loadFragment() {
-        val fragment = ListFragment()
         supportFragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment, null)
+                .replace(R.id.content_frame, listFragment, null)
                 .commit()
     }
 }

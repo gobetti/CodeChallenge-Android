@@ -10,7 +10,7 @@ data class TMDBResponse(
         val page: Int,
         @Json(name = "total_results")
         val totalMovies: Int,
-        val dates: Dates,
+        val dates: Dates?,
         @Json(name = "total_pages")
         val totalPages: Int
 )

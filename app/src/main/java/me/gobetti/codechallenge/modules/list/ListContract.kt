@@ -9,5 +9,6 @@ interface ListContract {
 
     interface Presenter {
         fun fetchMovies()
+        fun searchMovies(query: String)
     }
 }
