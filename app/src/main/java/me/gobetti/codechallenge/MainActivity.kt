@@ -8,9 +8,12 @@ import me.gobetti.codechallenge.modules.list.ListFragment
 import android.app.SearchManager
 import android.content.Context
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.MenuItem
+import me.gobetti.codechallenge.model.Movie
+import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OpenDetailsListener {
     private val listFragment: ListFragment by lazy { ListFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +55,11 @@ class MainActivity : AppCompatActivity() {
             listFragment.onSearchHistoryClearAction()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // OpenDetailsListener
+    override fun onDetailsRequested(movie: Movie) {
+        Log.d("onDetailsRequested", "Movie ${movie.title} was clicked")
     }
 
     private fun loadFragment() {

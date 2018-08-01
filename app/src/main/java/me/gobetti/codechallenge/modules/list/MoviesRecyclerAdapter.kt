@@ -9,11 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
+import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 import me.gobetti.codechallenge.service.TMDBImageSize
 import me.gobetti.codechallenge.service.loadFrom
 
-class MoviesRecyclerAdapter(private val movies: List<Movie>)
-    : RecyclerView.Adapter<MoviesRecyclerAdapter.ViewHolder>() {
+class MoviesRecyclerAdapter(
+        private val movies: List<Movie>,
+        private val openDetailsListener: OpenDetailsListener
+) : RecyclerView.Adapter<MoviesRecyclerAdapter.ViewHolder>() {
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.view_movie, viewGroup, false)
@@ -22,6 +25,9 @@ class MoviesRecyclerAdapter(private val movies: List<Movie>)
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val movie = movies[position]
+        viewHolder.itemView.setOnClickListener {
+            openDetailsListener.onDetailsRequested(movie)
+        }
         viewHolder.bind(movie)
     }
 
