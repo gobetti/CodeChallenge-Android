@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
 
+import kotlinx.android.synthetic.main.fragment_details.*
+import me.gobetti.codechallenge.service.TMDBImageSize
+import me.gobetti.codechallenge.service.loadFrom
+
 class DetailsFragment : Fragment(), DetailsContract.View {
     companion object {
         private const val MOVIE_KEY = "MOVIE_KEY"
@@ -27,5 +31,11 @@ class DetailsFragment : Fragment(), DetailsContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         movie = arguments!!.getSerializable(MOVIE_KEY) as Movie
         return inflater.inflate(R.layout.fragment_details, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        moviePosterImageView.loadFrom(movie, TMDBImageSize.highest)
+        movieOverviewTextView.text = movie.overview
     }
 }

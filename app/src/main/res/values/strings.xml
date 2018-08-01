@@ -4,4 +4,6 @@
     <string name="search_title">Search</string>
     <string name="search_hint">Search for movies in TMDB</string>
     <string name="action_clear_search_history">Clear search history</string>
+    <string name="movie_description">Movie description</string>
+    <string name="movie_poster">Movie poster</string>
 </resources>
