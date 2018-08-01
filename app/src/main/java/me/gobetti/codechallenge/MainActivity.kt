@@ -7,20 +7,23 @@ import android.view.Menu
 import me.gobetti.codechallenge.modules.list.ListFragment
 import android.app.SearchManager
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.MenuItem
 import me.gobetti.codechallenge.model.Movie
+import me.gobetti.codechallenge.modules.details.DetailsFragment
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
 class MainActivity : AppCompatActivity(), OpenDetailsListener {
+    enum class FragmentType { Details, List }
+
     private val listFragment: ListFragment by lazy { ListFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loadFragment()
+        loadFragment(FragmentType.List)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,12 +62,17 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
 
     // OpenDetailsListener
     override fun onDetailsRequested(movie: Movie) {
-        Log.d("onDetailsRequested", "Movie ${movie.title} was clicked")
+        loadFragment(FragmentType.Details, movie)
     }
 
-    private fun loadFragment() {
+    private fun loadFragment(type: FragmentType, movie: Movie? = null) {
+        val fragment: Fragment = when (type) {
+            FragmentType.Details -> DetailsFragment.newInstance(movie!!)
+            FragmentType.List -> listFragment
+        }
+
         supportFragmentManager.beginTransaction()
-                .replace(R.id.content_frame, listFragment, null)
+                .replace(R.id.content_frame, fragment, null)
                 .commit()
     }
 }
