@@ -66,12 +66,18 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        updateToolbarTitle()
+    }
+
     // OpenDetailsListener
     override fun onDetailsRequested(movie: Movie) {
         loadFragment(FragmentType.Details(movie))
     }
 
     private fun loadFragment(type: FragmentType) {
+        updateToolbarTitle(type)
         val fragment: Fragment = when (type) {
             is FragmentType.Details -> DetailsFragment.newInstance(type.movie)
             is FragmentType.List -> listFragment
@@ -85,5 +91,19 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
         }
 
         transaction.commit()
+    }
+
+    private fun updateToolbarTitle(fragmentType: FragmentType? = null) {
+        val appName = resources.getString(R.string.app_name)
+        val title = when(fragmentType) {
+            is MainActivity.FragmentType.Details -> fragmentType.movie.title
+            is MainActivity.FragmentType.List -> appName
+            null -> {
+                val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
+                if (fragment is ListFragment) appName else ""
+            }
+        }
+
+        supportActionBar?.title = title
     }
 }
