@@ -25,9 +25,7 @@ class MoviesRecyclerAdapter(private val movies: List<Movie>)
         viewHolder.bind(movie)
     }
 
-    override fun getItemCount(): Int {
-        return movies.size
-    }
+    override fun getItemCount() = movies.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val movieImageView: ImageView = itemView.findViewById(R.id.movieImage)

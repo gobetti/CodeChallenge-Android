@@ -12,9 +12,7 @@ interface TMDBService {
     fun getUpcomingMovies(): Call<TMDBResponse>
 
     companion object Factory {
-        fun create(): TMDBService {
-            return create("https://api.themoviedb.org/3/")
-        }
+        fun create() = create("https://api.themoviedb.org/3/")
 
         fun create(baseUrl: String): TMDBService {
             val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor()).build()
