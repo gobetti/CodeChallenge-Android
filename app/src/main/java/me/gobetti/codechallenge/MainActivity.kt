@@ -18,6 +18,9 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
     sealed class FragmentType {
         class Details(val movie: Movie): FragmentType()
         class List: FragmentType()
+
+        val isRoot: Boolean
+            get() = this is List
     }
 
     private val listFragment: ListFragment by lazy { ListFragment() }
@@ -74,8 +77,13 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
             is FragmentType.List -> listFragment
         }
 
-        supportFragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment, null)
-                .commit()
+
+        if (!type.isRoot) {
+            transaction.addToBackStack(null)
+        }
+
+        transaction.commit()
     }
 }
