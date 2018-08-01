@@ -20,6 +20,10 @@ class ListFragment : Fragment(), ListContract.View {
         presenter.searchMovies(query)
     }
 
+    fun onSearchHistoryClearAction() {
+        presenter.clearSearchHistory()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list, container, false)
     }

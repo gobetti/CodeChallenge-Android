@@ -11,6 +11,9 @@ import me.gobetti.codechallenge.utils.RecentSearchesProvider
 
 class ListPresenter(val view: ListContract.View): ListContract.Presenter {
     private val service = TMDBService.create()
+    private val suggestions by lazy {
+        SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
+    }
 
     override fun fetchMovies() {
         service.getUpcomingMovies().enqueue(object: Callback<TMDBResponse> {
@@ -30,8 +33,6 @@ class ListPresenter(val view: ListContract.View): ListContract.Presenter {
     }
 
     override fun searchMovies(query: String) {
-        val suggestions = SearchRecentSuggestions(view.getContext(),
-                RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
         suggestions.saveRecentQuery(query, null)
 
         service.searchMovies(query).enqueue(object: Callback<TMDBResponse> {
@@ -49,4 +50,6 @@ class ListPresenter(val view: ListContract.View): ListContract.Presenter {
             }
         })
     }
+
+    override fun clearSearchHistory() = suggestions.clearHistory()
 }

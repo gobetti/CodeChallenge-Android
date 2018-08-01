@@ -3,4 +3,5 @@
     <string name="placeholder_movie_title">Placeholder Movie Title</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search for movies in TMDB</string>
+    <string name="action_clear_search_history">Clear search history</string>
 </resources>
