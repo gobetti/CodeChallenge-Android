@@ -26,7 +26,7 @@ data class Movie(
         val title: String,
         val popularity: Double,
         @Json(name = "poster_path")
-        val posterPath: String,
+        val posterPath: String?,
         @Json(name = "original_language")
         val originalLanguage: String,
         @Json(name = "original_title")

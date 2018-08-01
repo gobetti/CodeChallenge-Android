@@ -17,7 +17,7 @@ enum class TMDBImageSize(val width: Int) {
 
 fun ImageView.loadFrom(movie: Movie, size: TMDBImageSize? = null) {
     val widthParam = size?.let { "w${it.width}" } ?: "original"
-    val imagePath = movie.posterPath
+    val imagePath = movie.posterPath ?: movie.backdropPath
     val url = "$BASE_URL/$widthParam$imagePath"
     Picasso.get().load(url).into(this)
 }
