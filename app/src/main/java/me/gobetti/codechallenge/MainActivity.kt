@@ -15,7 +15,10 @@ import me.gobetti.codechallenge.modules.details.DetailsFragment
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
 class MainActivity : AppCompatActivity(), OpenDetailsListener {
-    enum class FragmentType { Details, List }
+    sealed class FragmentType {
+        class Details(val movie: Movie): FragmentType()
+        class List: FragmentType()
+    }
 
     private val listFragment: ListFragment by lazy { ListFragment() }
 
@@ -23,7 +26,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loadFragment(FragmentType.List)
+        loadFragment(FragmentType.List())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -62,13 +65,13 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
 
     // OpenDetailsListener
     override fun onDetailsRequested(movie: Movie) {
-        loadFragment(FragmentType.Details, movie)
+        loadFragment(FragmentType.Details(movie))
     }
 
-    private fun loadFragment(type: FragmentType, movie: Movie? = null) {
+    private fun loadFragment(type: FragmentType) {
         val fragment: Fragment = when (type) {
-            FragmentType.Details -> DetailsFragment.newInstance(movie!!)
-            FragmentType.List -> listFragment
+            is FragmentType.Details -> DetailsFragment.newInstance(type.movie)
+            is FragmentType.List -> listFragment
         }
 
         supportFragmentManager.beginTransaction()
