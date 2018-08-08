@@ -1,6 +1,7 @@
 package me.gobetti.codechallenge.modules.list
 
 import android.util.Log
+import me.gobetti.codechallenge.di.serviceLocator
 import me.gobetti.codechallenge.model.TMDBResponse
 import me.gobetti.codechallenge.service.TMDBService
 import retrofit2.Call
@@ -9,8 +10,10 @@ import retrofit2.Response
 import android.provider.SearchRecentSuggestions
 import me.gobetti.codechallenge.utils.RecentSearchesProvider
 
-class ListPresenter(val view: ListContract.View): ListContract.Presenter {
-    private val service = TMDBService.create()
+class ListPresenter(
+        val view: ListContract.View,
+        private val service: TMDBService = serviceLocator().tmdbService
+): ListContract.Presenter {
     private val suggestions by lazy {
         SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
     }
