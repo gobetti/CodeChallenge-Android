@@ -13,10 +13,21 @@ import me.gobetti.codechallenge.service.TMDBImageSize
 import me.gobetti.codechallenge.service.loadFrom
 
 class MoviesRecyclerAdapter(
-        private val movies: List<Movie>,
         private val openDetailsListener: OpenDetailsListener,
         private val scrolledToEndListener: ScrolledToEndListener
 ) : RecyclerView.Adapter<MoviesRecyclerAdapter.ViewHolder>() {
+    var movies: List<Movie> = listOf()
+    set(value) {
+        val firstNewItemPosition = field.lastIndex + 1
+        val newItemCount = value.size - field.size
+        field = value
+        if (newItemCount > 0) {
+            notifyItemRangeInserted(firstNewItemPosition, newItemCount)
+        } else {
+            notifyDataSetChanged()
+        }
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.view_movie, viewGroup, false)

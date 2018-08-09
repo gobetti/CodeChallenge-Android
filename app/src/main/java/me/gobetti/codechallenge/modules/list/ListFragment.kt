@@ -10,13 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
-
-import kotlinx.android.synthetic.main.fragment_list.*
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
 class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, ScrolledToEndListener {
     private val presenter: ListContract.Presenter = ListPresenter(this)
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private val moviesAdapter = MoviesRecyclerAdapter(this, this)
     private var openDetailsListener: OpenDetailsListener? = null
 
     fun onSearchAction(query: String) {
@@ -39,8 +37,8 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, Scrolle
         super.onViewCreated(view, savedInstanceState)
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
 
-        linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.adapter = moviesAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     override fun onStart() {
@@ -67,8 +65,6 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, Scrolle
 
     // ListContract.View
     override fun displayMovies(movies: List<Movie>) {
-        val moviesAdapter = MoviesRecyclerAdapter(movies, this, this)
-        recyclerView.adapter = moviesAdapter
-        moviesAdapter.notifyDataSetChanged()
+        moviesAdapter.movies = movies
     }
 }
