@@ -8,31 +8,44 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.provider.SearchRecentSuggestions
+import me.gobetti.codechallenge.model.Movie
 import me.gobetti.codechallenge.utils.RecentSearchesProvider
 
 class ListPresenter(
         val view: ListContract.View,
         private val service: TMDBService = serviceLocator().tmdbService
 ): ListContract.Presenter {
+    private var page = 1
+    private var movies: List<Movie> = listOf()
     private val suggestions by lazy {
         SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
     }
 
-    override fun fetchMovies() {
-        service.getUpcomingMovies().enqueue(object: Callback<TMDBResponse> {
+    private fun fetchMovies(page: Int) {
+        service.getUpcomingMovies(page).enqueue(object: Callback<TMDBResponse> {
             override fun onResponse(call: Call<TMDBResponse>?, response: Response<TMDBResponse>?) {
                 val movies = response?.body()?.movies
                 if (movies == null) {
                     Log.e("getUpcomingMovies", "movies is null")
                     return
                 }
-                view.displayMovies(movies)
+                this@ListPresenter.movies += movies
+                view.displayMovies(this@ListPresenter.movies)
             }
 
             override fun onFailure(call: Call<TMDBResponse>?, t: Throwable?) {
                 Log.e("getUpcomingMovies", "onFailure")
             }
         })
+    }
+
+    override fun fetchMovies() {
+        resetState()
+        fetchMovies(page)
+    }
+
+    override fun fetchMoreMovies() {
+        fetchMovies(++page)
     }
 
     override fun searchMovies(query: String) {
@@ -55,4 +68,9 @@ class ListPresenter(
     }
 
     override fun clearSearchHistory() = suggestions.clearHistory()
+
+    private fun resetState() {
+        page = 1
+        movies = listOf()
+    }
 }

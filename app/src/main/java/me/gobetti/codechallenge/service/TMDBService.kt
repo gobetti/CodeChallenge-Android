@@ -10,7 +10,7 @@ import retrofit2.http.Query
 
 interface TMDBService {
     @GET("movie/upcoming")
-    fun getUpcomingMovies(): Call<TMDBResponse>
+    fun getUpcomingMovies(@Query("page") page: Int): Call<TMDBResponse>
 
     @GET("search/movie")
     fun searchMovies(@Query("query") query: String): Call<TMDBResponse>

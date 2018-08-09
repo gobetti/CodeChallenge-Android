@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import me.gobetti.codechallenge.R
@@ -15,7 +14,8 @@ import me.gobetti.codechallenge.service.loadFrom
 
 class MoviesRecyclerAdapter(
         private val movies: List<Movie>,
-        private val openDetailsListener: OpenDetailsListener
+        private val openDetailsListener: OpenDetailsListener,
+        private val scrolledToEndListener: ScrolledToEndListener
 ) : RecyclerView.Adapter<MoviesRecyclerAdapter.ViewHolder>() {
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
@@ -29,6 +29,10 @@ class MoviesRecyclerAdapter(
             openDetailsListener.onDetailsRequested(movie)
         }
         viewHolder.bind(movie)
+
+        if (position >= itemCount - 1) {
+            scrolledToEndListener.onScrolledToEnd()
+        }
     }
 
     override fun getItemCount() = movies.size

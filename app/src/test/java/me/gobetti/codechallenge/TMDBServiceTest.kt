@@ -33,7 +33,7 @@ class TMDBServiceTest {
         val mockResponse = MockResponse().setBody(JSONString("upcoming_200.json").value)
         mockWebServer.enqueue(mockResponse)
 
-        val response = sut.getUpcomingMovies().execute().body()
+        val response = sut.getUpcomingMovies(1).execute().body()
         assertEquals(response?.movies?.size, 20)
 
         val movie = response?.movies?.first()

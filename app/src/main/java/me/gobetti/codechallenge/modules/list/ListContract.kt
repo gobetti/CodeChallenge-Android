@@ -10,6 +10,7 @@ interface ListContract {
 
     interface Presenter {
         fun fetchMovies()
+        fun fetchMoreMovies()
         fun searchMovies(query: String)
         fun clearSearchHistory()
     }

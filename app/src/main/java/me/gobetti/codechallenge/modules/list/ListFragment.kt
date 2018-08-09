@@ -14,7 +14,7 @@ import me.gobetti.codechallenge.model.Movie
 import kotlinx.android.synthetic.main.fragment_list.*
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
-class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
+class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, ScrolledToEndListener {
     private val presenter: ListContract.Presenter = ListPresenter(this)
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var openDetailsListener: OpenDetailsListener? = null
@@ -60,8 +60,15 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
         openDetailsListener?.onDetailsRequested(movie)
     }
 
+    // ScrolledToEndListener
+    override fun onScrolledToEnd() {
+        presenter.fetchMoreMovies()
+    }
+
     // ListContract.View
     override fun displayMovies(movies: List<Movie>) {
-        recyclerView.adapter = MoviesRecyclerAdapter(movies, this)
+        val moviesAdapter = MoviesRecyclerAdapter(movies, this, this)
+        recyclerView.adapter = moviesAdapter
+        moviesAdapter.notifyDataSetChanged()
     }
 }
