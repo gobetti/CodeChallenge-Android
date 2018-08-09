@@ -28,6 +28,8 @@ class DetailsFragment : Fragment(), DetailsContract.View {
     }
 
     private lateinit var movie: Movie
+    val detailedMovie: Movie
+        get() = movie
     private var isFullScreen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

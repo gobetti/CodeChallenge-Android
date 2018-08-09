@@ -24,6 +24,16 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
     }
 
     private val listFragment: ListFragment by lazy { ListFragment() }
+    private var optionsMenu: Menu? = null
+    private val currentFragmentType: FragmentType
+        get() {
+            val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
+            return when (fragment) {
+                is DetailsFragment -> FragmentType.Details(fragment.detailedMovie)
+                is ListFragment -> FragmentType.List()
+                else -> TODO("unreachable")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +43,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        optionsMenu = menu
         menuInflater.inflate(R.menu.options_menu, menu)
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
@@ -68,7 +79,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        updateToolbarTitle()
+        updateToolbar(currentFragmentType)
     }
 
     // OpenDetailsListener
@@ -77,7 +88,8 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
     }
 
     private fun loadFragment(type: FragmentType) {
-        updateToolbarTitle(type)
+        updateToolbar(type)
+
         val fragment: Fragment = when (type) {
             is FragmentType.Details -> DetailsFragment.newInstance(type.movie)
             is FragmentType.List -> listFragment
@@ -93,17 +105,21 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
         transaction.commit()
     }
 
-    private fun updateToolbarTitle(fragmentType: FragmentType? = null) {
+    private fun updateToolbar(fragmentType: FragmentType) {
         val appName = resources.getString(R.string.app_name)
         val title = when(fragmentType) {
-            is MainActivity.FragmentType.Details -> fragmentType.movie.title
-            is MainActivity.FragmentType.List -> appName
-            null -> {
-                val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
-                if (fragment is ListFragment) appName else ""
-            }
+            is FragmentType.Details -> fragmentType.movie.title
+            is FragmentType.List -> appName
         }
 
         supportActionBar?.title = title
+
+        setSearchItemsVisible(fragmentType is FragmentType.List)
+    }
+
+    private fun setSearchItemsVisible(isVisible: Boolean) {
+        listOf(R.id.action_search, R.id.action_clear_search_history).map {
+            optionsMenu?.findItem(it)?.isVisible = isVisible
+        }
     }
 }
