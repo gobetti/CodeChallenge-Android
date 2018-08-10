@@ -13,7 +13,8 @@ interface TMDBService {
     fun getUpcomingMovies(@Query("page") page: Int): Call<TMDBResponse>
 
     @GET("search/movie")
-    fun searchMovies(@Query("query") query: String): Call<TMDBResponse>
+    fun searchMovies(@Query("query") query: String,
+                     @Query("page") page: Int): Call<TMDBResponse>
 
     companion object {
         const val PAGE_SIZE = 20

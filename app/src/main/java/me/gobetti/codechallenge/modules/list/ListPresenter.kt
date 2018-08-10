@@ -1,5 +1,6 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
@@ -13,27 +14,35 @@ class ListPresenter(
         val view: ListContract.View,
         private val service: TMDBService = serviceLocator().tmdbService
 ): ListContract.Presenter {
-    private val moviesPagedList = LivePagedListBuilder<Int, Movie>(
-            MovieDataSourceFactory(service),
+    private val suggestions by lazy {
+        SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
+    }
+
+    private var pagedList: LiveData<PagedList<Movie>>? = null
+        set(value) {
+            pagedList?.removeObservers(view)
+            field = value
+            value?.observe(view, Observer<PagedList<Movie>> {
+                view.displayPagedMovies(it)
+            })
+        }
+
+    private fun createMoviesPagedList(requestType: RequestType) = LivePagedListBuilder<Int, Movie>(
+            MovieDataSourceFactory(service, requestType),
             PagedList.Config.Builder()
                     .setEnablePlaceholders(false)
                     .setPageSize(TMDBService.PAGE_SIZE)
                     .build())
             .build()
 
-    private val suggestions by lazy {
-        SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
-    }
-
+    // ListContract.Presenter
     override fun fetchMovies() {
-        moviesPagedList.observe(view, Observer<PagedList<Movie>> {
-            view.displayPagedMovies(it)
-        })
+        pagedList = createMoviesPagedList(RequestType.Upcoming())
     }
 
     override fun searchMovies(query: String) {
         suggestions.saveRecentQuery(query, null)
-        TODO("not implemented")
+        pagedList = createMoviesPagedList(RequestType.Search(query))
     }
 
     override fun clearSearchHistory() = suggestions.clearHistory()

@@ -9,8 +9,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+sealed class RequestType {
+    class Search(val query: String): RequestType()
+    class Upcoming: RequestType()
+}
+
 class MovieDataSource(
-        private val service: TMDBService
+        private val service: TMDBService,
+        private val requestType: RequestType
 ): PageKeyedDataSource<Int, Movie>() {
     companion object {
         const val FIRST_PAGE = 1
@@ -41,7 +47,12 @@ class MovieDataSource(
     }
 
     private fun getUpcomingMovies(page: Int, success: (List<Movie>, totalPages: Int) -> Unit) {
-        service.getUpcomingMovies(page).enqueue(object: Callback<TMDBResponse> {
+        val request = when (requestType) {
+            is RequestType.Search -> service.searchMovies(requestType.query, page)
+            is RequestType.Upcoming -> service.getUpcomingMovies(page)
+        }
+
+        request.enqueue(object: Callback<TMDBResponse> {
             override fun onResponse(call: Call<TMDBResponse>?, response: Response<TMDBResponse>?) {
                 val body = response?.body()
                 val movies = body?.movies
