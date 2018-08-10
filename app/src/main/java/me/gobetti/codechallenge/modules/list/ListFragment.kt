@@ -20,6 +20,10 @@ class ListFragment : Fragment(), ListContract.View {
         presenter.searchMovies(query)
     }
 
+    fun onSearchEnded() {
+        presenter.fetchMovies()
+    }
+
     fun onSearchHistoryClearAction() {
         presenter.clearSearchHistory()
     }

@@ -24,7 +24,17 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.options_menu, menu)
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = menu?.findItem(R.id.action_search)?.actionView as SearchView?
+        val searchMenuItem = menu?.findItem(R.id.action_search)
+        searchMenuItem?.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean = true
+
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                listFragment.onSearchEnded()
+                return true
+            }
+        })
+
+        val searchView = searchMenuItem?.actionView as SearchView?
         searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
         return true
