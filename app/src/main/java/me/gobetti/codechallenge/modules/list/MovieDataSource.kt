@@ -12,36 +12,44 @@ import retrofit2.Response
 class MovieDataSource(
         private val service: TMDBService
 ): PageKeyedDataSource<Int, Movie>() {
+    companion object {
+        const val FIRST_PAGE = 1
+    }
+
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Movie>) {
-        val page = 1
-        getUpcomingMovies(page) {
-            callback.onResult(it, null, page + 1)
+        val page = FIRST_PAGE
+        getUpcomingMovies(page) { movies, totalPages ->
+            val adjacentPage = if (page < totalPages) page + 1 else null
+            callback.onResult(movies, null, adjacentPage)
         }
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
         val page = params.key
-        getUpcomingMovies(page) {
-            callback.onResult(it, page + 1)
+        getUpcomingMovies(page) { movies, totalPages ->
+            val adjacentPage = if (page < totalPages) page + 1 else null
+            callback.onResult(movies, adjacentPage)
         }
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
         val page = params.key
-        getUpcomingMovies(page) {
-            callback.onResult(it, page - 1)
+        getUpcomingMovies(page) { movies, _ ->
+            val adjacentPage = if (page > FIRST_PAGE) page - 1 else null
+            callback.onResult(movies, adjacentPage)
         }
     }
 
-    private fun getUpcomingMovies(page: Int, success: (List<Movie>) -> Unit) {
+    private fun getUpcomingMovies(page: Int, success: (List<Movie>, totalPages: Int) -> Unit) {
         service.getUpcomingMovies(page).enqueue(object: Callback<TMDBResponse> {
             override fun onResponse(call: Call<TMDBResponse>?, response: Response<TMDBResponse>?) {
-                val movies = response?.body()?.movies
+                val body = response?.body()
+                val movies = body?.movies
                 if (movies == null) {
                     Log.e("getUpcomingMovies", "movies is null")
                     return
                 }
-                success(movies)
+                success(movies, body.totalPages)
             }
 
             override fun onFailure(call: Call<TMDBResponse>?, t: Throwable?) {
