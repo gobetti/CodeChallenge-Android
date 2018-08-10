@@ -1,5 +1,7 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.arch.paging.PagedListAdapter
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,18 +15,17 @@ import me.gobetti.codechallenge.service.TMDBImageSize
 import me.gobetti.codechallenge.service.loadFrom
 
 class MoviesRecyclerAdapter(
-        private val openDetailsListener: OpenDetailsListener,
-        private val scrolledToEndListener: ScrolledToEndListener
-) : RecyclerView.Adapter<MoviesRecyclerAdapter.ViewHolder>() {
-    var movies: List<Movie> = listOf()
-    set(value) {
-        val firstNewItemPosition = field.lastIndex + 1
-        val newItemCount = value.size - field.size
-        field = value
-        if (newItemCount > 0) {
-            notifyItemRangeInserted(firstNewItemPosition, newItemCount)
-        } else {
-            notifyDataSetChanged()
+        private val openDetailsListener: OpenDetailsListener
+) : PagedListAdapter<Movie, MoviesRecyclerAdapter.ViewHolder>(DIFF_CALLBACK) {
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Movie>() {
+            override fun areItemsTheSame(p0: Movie, p1: Movie): Boolean {
+                return p0.id == p1.id
+            }
+
+            override fun areContentsTheSame(p0: Movie, p1: Movie): Boolean {
+                return p0 == p1
+            }
         }
     }
 
@@ -35,18 +36,13 @@ class MoviesRecyclerAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val movie = movies[position]
+        val movie = getItem(position) ?: return
+
         viewHolder.itemView.setOnClickListener {
             openDetailsListener.onDetailsRequested(movie)
         }
         viewHolder.bind(movie)
-
-        if (position >= itemCount - 1) {
-            scrolledToEndListener.onScrolledToEnd()
-        }
     }
-
-    override fun getItemCount() = movies.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val movieImageView: ImageView = itemView.findViewById(R.id.movieImage)

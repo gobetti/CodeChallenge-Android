@@ -24,26 +24,26 @@ class ListPresenterTest {
         serviceWrapper.shutdown()
     }
 
-    @Test
-    fun tellsViewToDisplayMovies() {
-        val expectation = Object()
-
-        var wasCalled = false
-        val sut = ListPresenter(ListViewMock {
-            wasCalled = true
-            synchronized(expectation) { expectation.notify() }
-        }, serviceWrapper.service)
-
-        val mockResponse = MockResponse().setBody(JSONString("upcoming_200.json").value)
-        serviceWrapper.enqueue(mockResponse)
-
-        //
-        sut.fetchMovies()
-        //
-
-        synchronized(expectation) { expectation.wait(1000) }
-        assertTrue(wasCalled)
-    }
+//    @Test
+//    fun tellsViewToDisplayMovies() {
+//        val expectation = Object()
+//
+//        var wasCalled = false
+//        val sut = ListPresenter(ListViewMock {
+//            wasCalled = true
+//            synchronized(expectation) { expectation.notify() }
+//        }, serviceWrapper.service)
+//
+//        val mockResponse = MockResponse().setBody(JSONString("upcoming_200.json").value)
+//        serviceWrapper.enqueue(mockResponse)
+//
+//        //
+//        sut.fetchMovies()
+//        //
+//
+//        synchronized(expectation) { expectation.wait(1000) }
+//        assertTrue(wasCalled)
+//    }
 }
 
 private data class ListViewMock(

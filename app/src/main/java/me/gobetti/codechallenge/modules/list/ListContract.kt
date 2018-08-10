@@ -1,16 +1,16 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.arch.paging.PagedList
 import me.gobetti.codechallenge.model.Movie
 import me.gobetti.codechallenge.modules.BaseMVPView
 
 interface ListContract {
     interface View: BaseMVPView {
-        fun displayMovies(movies: List<Movie>)
+        fun displayPagedMovies(movies: PagedList<Movie>?)
     }
 
     interface Presenter {
         fun fetchMovies()
-        fun fetchMoreMovies()
         fun searchMovies(query: String)
         fun clearSearchHistory()
     }

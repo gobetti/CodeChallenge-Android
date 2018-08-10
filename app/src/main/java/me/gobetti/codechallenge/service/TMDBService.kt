@@ -15,10 +15,10 @@ interface TMDBService {
     @GET("search/movie")
     fun searchMovies(@Query("query") query: String): Call<TMDBResponse>
 
-    companion object Factory {
-        fun create() = create("https://api.themoviedb.org/3/")
+    companion object {
+        const val PAGE_SIZE = 20
 
-        fun create(baseUrl: String): TMDBService {
+        fun create(baseUrl: String = "https://api.themoviedb.org/3/"): TMDBService {
             val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor()).build()
 
             return Retrofit.Builder()

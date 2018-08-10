@@ -1,5 +1,6 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.arch.paging.PagedList
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,9 +13,9 @@ import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
-class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, ScrolledToEndListener {
+class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
     private val presenter: ListContract.Presenter = ListPresenter(this)
-    private val moviesAdapter = MoviesRecyclerAdapter(this, this)
+    private val moviesAdapter = MoviesRecyclerAdapter(this)
     private var openDetailsListener: OpenDetailsListener? = null
 
     fun onSearchAction(query: String) {
@@ -58,13 +59,8 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener, Scrolle
         openDetailsListener?.onDetailsRequested(movie)
     }
 
-    // ScrolledToEndListener
-    override fun onScrolledToEnd() {
-        presenter.fetchMoreMovies()
-    }
-
     // ListContract.View
-    override fun displayMovies(movies: List<Movie>) {
-        moviesAdapter.movies = movies
+    override fun displayPagedMovies(movies: PagedList<Movie>?) {
+        moviesAdapter.submitList(movies)
     }
 }
