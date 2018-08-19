@@ -1,5 +1,6 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.arch.lifecycle.Observer
 import android.arch.paging.PagedList
 import android.content.Context
 import android.os.Bundle
@@ -11,23 +12,24 @@ import android.view.View
 import android.view.ViewGroup
 import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
+import me.gobetti.codechallenge.modules.ContextProvider
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
-class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
-    private val presenter: ListContract.Presenter = ListPresenter(this)
+class ListFragment : Fragment(), ContextProvider, OpenDetailsListener {
+    private val viewModel: ListContract.ViewModel = ListViewModel(this)
     private val moviesAdapter = MoviesRecyclerAdapter(this)
     private var openDetailsListener: OpenDetailsListener? = null
 
     fun onSearchAction(query: String) {
-        presenter.searchMovies(query)
+        viewModel.searchMovies(query)
     }
 
     fun onSearchEnded() {
-        presenter.fetchMovies()
+        viewModel.fetchMovies()
     }
 
     fun onSearchHistoryClearAction() {
-        presenter.clearSearchHistory()
+        viewModel.clearSearchHistory()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,11 +42,15 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
 
         recyclerView.adapter = moviesAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+
+        viewModel.movies.observe(this, Observer<PagedList<Movie>> {
+            moviesAdapter.submitList(it)
+        })
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.fetchMovies()
+        viewModel.fetchMovies()
     }
 
     override fun onAttach(context: Context?) {
@@ -57,10 +63,5 @@ class ListFragment : Fragment(), ListContract.View, OpenDetailsListener {
     // OpenDetailsListener
     override fun onDetailsRequested(movie: Movie) {
         openDetailsListener?.onDetailsRequested(movie)
-    }
-
-    // ListContract.View
-    override fun displayPagedMovies(movies: PagedList<Movie>?) {
-        moviesAdapter.submitList(movies)
     }
 }

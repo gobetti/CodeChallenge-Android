@@ -1,8 +1,7 @@
 package me.gobetti.codechallenge.modules
 
-import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 
-interface BaseMVPView: LifecycleOwner {
+interface ContextProvider {
     fun getContext(): Context?
 }
