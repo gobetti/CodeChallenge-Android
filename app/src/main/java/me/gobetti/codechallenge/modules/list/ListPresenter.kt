@@ -1,6 +1,7 @@
 package me.gobetti.codechallenge.modules.list
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.Observer
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
@@ -18,14 +19,11 @@ class ListPresenter(
         SearchRecentSuggestions(view.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
     }
 
-    private var pagedList: LiveData<PagedList<Movie>>? = null
-        set(value) {
-            pagedList?.removeObservers(view)
-            field = value
-            value?.observe(view, Observer<PagedList<Movie>> {
-                view.displayPagedMovies(it)
-            })
-        }
+    private val pagedList = MediatorLiveData<PagedList<Movie>>().apply {
+        observe(view, Observer<PagedList<Movie>> {
+            view.displayPagedMovies(it)
+        })
+    }
 
     private fun createMoviesPagedList(requestType: RequestType) = LivePagedListBuilder<Int, Movie>(
             MovieDataSourceFactory(service, requestType),
@@ -35,14 +33,18 @@ class ListPresenter(
                     .build())
             .build()
 
+    private fun setLiveDataSource(liveData: LiveData<PagedList<Movie>>) = pagedList.addSource(liveData) {
+        pagedList.value = it
+    }
+
     // ListContract.Presenter
     override fun fetchMovies() {
-        pagedList = createMoviesPagedList(RequestType.Upcoming())
+        setLiveDataSource(createMoviesPagedList(RequestType.Upcoming()))
     }
 
     override fun searchMovies(query: String) {
         suggestions.saveRecentQuery(query, null)
-        pagedList = createMoviesPagedList(RequestType.Search(query))
+        setLiveDataSource(createMoviesPagedList(RequestType.Search(query)))
     }
 
     override fun clearSearchHistory() = suggestions.clearHistory()
