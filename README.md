@@ -8,7 +8,7 @@ The [TMDB API](https://www.themoviedb.org/documentation/api) is used.
 ## Architecture
 
 - Focus on simplicity (since the app is pretty simple)
-- MVVM where LiveData observation is needed, MVP otherwise
+- MVVM where state retention + LiveData observation are needed, MVP otherwise
 - Simple dependencies (no Dagger, no Rx - even though I'm a big fan of Rx)
 - [ServiceLocator pattern replaces Dagger](https://blog.kotlin-academy.com/dependency-injection-the-pattern-without-the-framework-33cfa9d5f312) quite well without generated code surprises
 - [Single-activity app](https://android-developers.googleblog.com/2018/05/use-android-jetpack-to-accelerate-your.html?m=1) (however not yet using the [Navigation Architecture Component](https://developer.android.com/topic/libraries/architecture/navigation/))

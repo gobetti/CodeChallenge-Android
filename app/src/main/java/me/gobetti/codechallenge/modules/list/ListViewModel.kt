@@ -1,27 +1,26 @@
 package me.gobetti.codechallenge.modules.list
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.ViewModel
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import android.provider.SearchRecentSuggestions
 import me.gobetti.codechallenge.di.serviceLocator
 import me.gobetti.codechallenge.model.Movie
-import me.gobetti.codechallenge.modules.ContextProvider
 import me.gobetti.codechallenge.service.TMDBService
 import me.gobetti.codechallenge.utils.RecentSearchesProvider
 
-class ListViewModel(
-        private val contextProvider: ContextProvider,
-        private val service: TMDBService = serviceLocator().tmdbService
-): ViewModel(), ListContract.ViewModel {
+class ListViewModel(application: Application): AndroidViewModel(application) {
+    private val service = serviceLocator().tmdbService
     private val suggestions by lazy {
-        SearchRecentSuggestions(contextProvider.getContext(), RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
+        SearchRecentSuggestions(application, RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
     }
 
     private val pagedList = MediatorLiveData<PagedList<Movie>>()
-    override val movies = pagedList
+    val movies: LiveData<PagedList<Movie>>
+        get() = pagedList
 
     private fun createMoviesPagedList(requestType: RequestType) = LivePagedListBuilder<Int, Movie>(
             MovieDataSourceFactory(service, requestType),
@@ -35,15 +34,14 @@ class ListViewModel(
         pagedList.value = it
     }
 
-    // ListContract.ViewModel
-    override fun fetchMovies() {
+    fun fetchMovies() {
         setLiveDataSource(createMoviesPagedList(RequestType.Upcoming()))
     }
 
-    override fun searchMovies(query: String) {
+    fun searchMovies(query: String) {
         suggestions.saveRecentQuery(query, null)
         setLiveDataSource(createMoviesPagedList(RequestType.Search(query)))
     }
 
-    override fun clearSearchHistory() = suggestions.clearHistory()
+    fun clearSearchHistory() = suggestions.clearHistory()
 }

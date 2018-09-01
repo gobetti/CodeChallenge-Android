@@ -3,7 +3,6 @@ package me.gobetti.codechallenge
 import android.content.Context
 
 import me.gobetti.codechallenge.model.Movie
-import me.gobetti.codechallenge.modules.list.ListContract
 import me.gobetti.codechallenge.modules.list.ListPresenter
 import okhttp3.mockwebserver.MockResponse
 import org.junit.After
@@ -48,7 +47,7 @@ class ListPresenterTest {
 
 private data class ListViewMock(
         private val displayMoviesCalled: () -> Unit
-): ListContract.View {
+){
     override fun displayMovies(movies: List<Movie>) {
         displayMoviesCalled()
     }

@@ -1,6 +1,7 @@
 package me.gobetti.codechallenge.modules.list
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
 import android.content.Context
 import android.os.Bundle
@@ -12,11 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import me.gobetti.codechallenge.R
 import me.gobetti.codechallenge.model.Movie
-import me.gobetti.codechallenge.modules.ContextProvider
 import me.gobetti.codechallenge.modules.details.OpenDetailsListener
 
-class ListFragment : Fragment(), ContextProvider, OpenDetailsListener {
-    private val viewModel: ListContract.ViewModel = ListViewModel(this)
+class ListFragment : Fragment(), OpenDetailsListener {
+    private val viewModel by lazy {
+        ViewModelProviders.of(this).get(ListViewModel::class.java)
+    }
     private val moviesAdapter = MoviesRecyclerAdapter(this)
     private var openDetailsListener: OpenDetailsListener? = null
 
