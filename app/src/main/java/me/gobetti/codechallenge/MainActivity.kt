@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (savedInstanceState != null) return
         loadFragment(FragmentType.List())
     }
 
