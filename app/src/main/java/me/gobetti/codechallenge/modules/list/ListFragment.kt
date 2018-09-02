@@ -52,7 +52,7 @@ class ListFragment : Fragment(), OpenDetailsListener {
 
     override fun onStart() {
         super.onStart()
-        viewModel.fetchMovies()
+        viewModel.start()
     }
 
     override fun onAttach(context: Context?) {

@@ -18,6 +18,7 @@ class ListViewModel(application: Application): AndroidViewModel(application) {
         SearchRecentSuggestions(application, RecentSearchesProvider.AUTHORITY, RecentSearchesProvider.MODE)
     }
 
+    private var hasStarted = false
     private val pagedList = MediatorLiveData<PagedList<Movie>>()
     val movies: LiveData<PagedList<Movie>>
         get() = pagedList
@@ -32,6 +33,12 @@ class ListViewModel(application: Application): AndroidViewModel(application) {
 
     private fun setLiveDataSource(liveData: LiveData<PagedList<Movie>>) = pagedList.addSource(liveData) {
         pagedList.value = it
+    }
+
+    fun start() {
+        if (hasStarted) return
+        hasStarted = true
+        fetchMovies()
     }
 
     fun fetchMovies() {
