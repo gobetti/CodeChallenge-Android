@@ -45,7 +45,7 @@ class ListFragment : Fragment(), OpenDetailsListener {
         recyclerView.adapter = moviesAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        viewModel.movies.observe(this, Observer<PagedList<Movie>> {
+        viewModel.movies.observe(viewLifecycleOwner, Observer<PagedList<Movie>> {
             moviesAdapter.submitList(it)
         })
     }
