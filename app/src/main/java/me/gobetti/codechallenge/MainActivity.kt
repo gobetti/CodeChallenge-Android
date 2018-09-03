@@ -23,17 +23,20 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
             get() = this is List
     }
 
-    private val listFragment: ListFragment by lazy { ListFragment() }
     private var optionsMenu: Menu? = null
+    private val currentFragment: Fragment?
+        get() = supportFragmentManager.findFragmentById(R.id.content_frame)
     private val currentFragmentType: FragmentType
         get() {
-            val fragment = supportFragmentManager.findFragmentById(R.id.content_frame)
+            val fragment = currentFragment
             return when (fragment) {
                 is DetailsFragment -> FragmentType.Details(fragment.detailedMovie)
                 is ListFragment -> FragmentType.List()
                 else -> TODO("unreachable")
             }
         }
+    private val listFragment: ListFragment?
+        get() = supportFragmentManager.findFragmentById(R.id.content_frame) as? ListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean = true
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
-                listFragment.onSearchEnded()
+                listFragment?.onSearchEnded()
                 return true
             }
         })
@@ -67,13 +70,13 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
     override fun onNewIntent(intent: Intent?) {
         if (intent != null && intent.action == Intent.ACTION_SEARCH) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            listFragment.onSearchAction(query)
+            listFragment?.onSearchAction(query)
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.action_clear_search_history) {
-            listFragment.onSearchHistoryClearAction()
+            listFragment?.onSearchHistoryClearAction()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -93,7 +96,7 @@ class MainActivity : AppCompatActivity(), OpenDetailsListener {
 
         val fragment: Fragment = when (type) {
             is FragmentType.Details -> DetailsFragment.newInstance(type.movie)
-            is FragmentType.List -> listFragment
+            is FragmentType.List -> listFragment ?: ListFragment()
         }
 
         val transaction = supportFragmentManager.beginTransaction()
