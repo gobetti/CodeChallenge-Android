@@ -2,7 +2,6 @@ package me.gobetti.codechallenge.modules.list
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -45,9 +44,7 @@ class ListFragment : Fragment(), OpenDetailsListener {
         recyclerView.adapter = moviesAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        viewModel.movies.observe(viewLifecycleOwner, Observer<PagedList<Movie>> {
-            moviesAdapter.submitList(it)
-        })
+        viewModel.movies.observe(viewLifecycleOwner, Observer(moviesAdapter::submitList))
     }
 
     override fun onStart() {
